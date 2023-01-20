@@ -2,6 +2,26 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Developing Locally
+
+### Running the backend
+
+Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instructions in its README to run the backend.
+
+### Running the frontend
+
+Run the following to start the frontend:
+
+```sh
+npm start
+```
+
+### Redirecting from Freshbooks to localhost
+
+When going through the authorization flow with Freshbooks, you’ll notice that it redirects you to a URL like `https://bitovians.github.io/pto/?code=q32w3rs4dtfjgyk`.
+
+To get the app working locally, replace the `https://bitovians.github.io` portion with `http://localhost:3000` and load the page. After doing so, you should see numbers that reflect your available PTO.
+
 ## Available Scripts
 
 In the project directory, you can run:
