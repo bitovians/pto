@@ -25,7 +25,10 @@ export function useGetPTO(): {
   const getPTO = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(apiBaseURL + "/pto", {
+
+      console.log({ token });
+
+      const res = await axios.get("http://localhost:4000" + "/pto", {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -36,7 +39,9 @@ export function useGetPTO(): {
 
       return { totalAccrued, totalAvailable };
     } catch (error) {
-      localStorage.removeItem(STORAGE_PROP);
+      console.log({ error });
+
+      // localStorage.removeItem(STORAGE_PROP);
     } finally {
       setLoading(false);
     }

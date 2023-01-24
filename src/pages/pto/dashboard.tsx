@@ -14,7 +14,7 @@ const Dashboard: NextPage = () => {
   const { getPTO, loading } = useGetPTO();
 
   useEffect(() => {
-    getPTO().then(setData);
+    getPTO().then((res) => setData(res));
   }, []);
 
   return (

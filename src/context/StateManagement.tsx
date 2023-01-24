@@ -13,15 +13,15 @@ export const Context = createContext<Context>({} as Context);
 
 const StateManagement: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string>();
-  const [apiBaseURL, setApiBaseURL] = useState<string>(SERVER_URL);
+  const [apiBaseURL, setApiBaseURL] = useState<string>("http://localhost:4000");
 
   useEffect(() => {
-    setApiBaseURL(
-      window.location.origin.includes("localhost")
-        ? "http://localhost:4000"
-        : SERVER_URL
-    );
-    setToken(window.localStorage.getItem(STORAGE_PROP) ?? undefined);
+    // setApiBaseURL(
+    //   window.location.origin.includes("localhost")
+    //     ? "http://localhost:4000"
+    //     : SERVER_URL
+    // );
+    // setToken(window.localStorage.getItem(STORAGE_PROP) ?? undefined);
   }, []);
 
   const value = {
