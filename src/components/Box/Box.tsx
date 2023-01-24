@@ -1,3 +1,5 @@
+import styles from "./styles.module.scss";
+
 interface IBox {
   value: string;
   text: string;
@@ -5,7 +7,7 @@ interface IBox {
 
 const Box = ({ value, text }: IBox) => {
   return (
-    <div className="box">
+    <div className={styles.box}>
       {value}
       <p>{text}</p>
     </div>

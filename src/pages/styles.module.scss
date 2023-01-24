@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+
+  border: 2.5px solid #cb3037;
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+
+  a {
+    margin-top: 40px;
+  }
+}

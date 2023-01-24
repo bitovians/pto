@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "module": "commonjs",
     "moduleResolution": "Node",
     "target": "ES5",
-    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2020"
+    ],
     "declaration": true,
-
     "strict": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -27,7 +29,16 @@
     "strictPropertyInitialization": true,
     "useDefineForClassFields": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "incremental": true
   },
-  "include": ["*.ts", "src"]
+  "include": [
+    "*.ts",
+    "src",
+    "./declaration.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
