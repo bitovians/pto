@@ -6,27 +6,41 @@ import { STORAGE_PROP, SERVER_URL } from "./const";
 interface Context {
   token: string | undefined;
   setToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+  code: string | undefined;
   apiBaseURL: string;
 }
 
 export const Context = createContext<Context>({} as Context);
 
 const StateManagement: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [initialized, setInitialized] = useState(false);
   const [token, setToken] = useState<string>();
+  const [code, setCode] = useState<string | undefined>(undefined);
   const [apiBaseURL, setApiBaseURL] = useState<string>("http://localhost:4000");
 
   useEffect(() => {
-    // setApiBaseURL(
-    //   window.location.origin.includes("localhost")
-    //     ? "http://localhost:4000"
-    //     : SERVER_URL
-    // );
-    // setToken(window.localStorage.getItem(STORAGE_PROP) ?? undefined);
+    if (!code) {
+      const url = new URLSearchParams(window.location.search);
+      setCode(url.get("code") ?? undefined);
+    }
+
+    if (!initialized) {
+      setToken(window.localStorage.getItem(STORAGE_PROP) ?? undefined);
+
+      // setApiBaseURL(
+      //   window.location.origin.includes("localhost")
+      //     ? "http://localhost:4000"
+      //     : SERVER_URL
+      // );
+
+      setInitialized(true);
+    }
   }, []);
 
   const value = {
     token,
     setToken,
+    code,
     apiBaseURL,
   };
 

@@ -11,13 +11,11 @@ export function useLogin(): {
 } {
   const { push } = useRouter();
   const [loading, setLoading] = useState(false);
-  const { token, setToken, apiBaseURL } = useContext(Context);
+  const { setToken, apiBaseURL, code } = useContext(Context);
 
   const login = async () => {
     try {
       setLoading(true);
-      const url = new URLSearchParams(window.location.search);
-      const code = url.get("code");
 
       if (code) {
         console.log("login");
@@ -36,8 +34,6 @@ export function useLogin(): {
         const access_token = res.data.data.access_token;
 
         if (access_token) {
-          console.log({ access_token });
-
           await localStorage.setItem(STORAGE_PROP, "Bearer " + access_token);
           await setToken(access_token);
 
