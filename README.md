@@ -13,7 +13,7 @@ Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instr
 Run the following to start the frontend:
 
 ```sh
-npm start
+npm run dev
 ```
 
 ### Redirecting from Freshbooks to localhost
@@ -26,7 +26,7 @@ To get the app working locally, replace the `https://bitovians.github.io` portio
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.

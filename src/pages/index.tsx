@@ -1,23 +1,29 @@
 import { NextPage } from "next";
-import { useContext } from "react";
+import { useRouter } from "next/router";
 
 import Button from "../components/Button";
 import { useLogin } from "../context/hooks/useLogin";
-import { Context } from "../context/StateManagement";
 
 import styles from "./styles.module.scss";
 
 const Login: NextPage = () => {
-  const { setToken } = useContext(Context);
   const { login } = useLogin();
-  console.log({ setToken });
+  const { push } = useRouter();
+
+  const loginAction = () => {
+    login().then((res) => {
+      if (res === "success") {
+        push("/pto");
+      }
+    });
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.content}>
         <h1>PTO APP</h1>
 
-        <Button onClick={login}>Login</Button>
+        <Button onClick={loginAction}>Login</Button>
       </div>
     </div>
   );
