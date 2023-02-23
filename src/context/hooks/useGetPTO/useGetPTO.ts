@@ -31,7 +31,7 @@ export function useGetPTO(): {
       const res = await axios.get("http://localhost:4000" + "/pto", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 

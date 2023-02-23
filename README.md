@@ -4,6 +4,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Developing Locally
 
+We will need to install mkcert and run it to generate a local certificate. This is necessary because Freshbooks requires a secure connection to redirect to.
+
+### Installing mkcert
+
+- run `brew install mkcert`
+- run `mkcert -install`
+- run `mkcert localhost`
+
+The This will generate two pem (localhost.pem and localhost-key.pem) files in your home directory.
+
+- create a server.js file in the root of the project with the code from this article: https://ilango.hashnode.dev/serving-a-nextjs-application-over-https-in-localhost
+
+- run `node server.js` to start the server and serve the app over https://localhost:3000
+
 ### Running the backend
 
 Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instructions in its README to run the backend.

@@ -10,12 +10,17 @@ interface Context {
   apiBaseURL: string;
 }
 
-export const Context = createContext<Context>({} as Context);
+export const Context = createContext<Context>({
+  token: undefined,
+  setToken: () => {},
+  code: undefined,
+  apiBaseURL: "",
+});
 
 const StateManagement: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [initialized, setInitialized] = useState(false);
   const [token, setToken] = useState<string>();
-  const [code, setCode] = useState<string | undefined>(undefined);
+  const [code, setCode] = useState<string>();
   const [apiBaseURL, setApiBaseURL] = useState<string>("http://localhost:4000");
 
   useEffect(() => {
@@ -27,11 +32,11 @@ const StateManagement: FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!initialized) {
       setToken(window.localStorage.getItem(STORAGE_PROP) ?? undefined);
 
-      // setApiBaseURL(
-      //   window.location.origin.includes("localhost")
-      //     ? "http://localhost:4000"
-      //     : SERVER_URL
-      // );
+      setApiBaseURL(
+        window.location.origin.includes("localhost")
+          ? "http://localhost:4000"
+          : SERVER_URL
+      );
 
       setInitialized(true);
     }
