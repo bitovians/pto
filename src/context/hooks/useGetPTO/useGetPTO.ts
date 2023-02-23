@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
-import { STORAGE_PROP } from "../../const";
-import { Context } from "../../StateManagement";
+import { useGetToken } from "../useGetToken";
 
 export interface PTO {
   totalAccrued: {
@@ -20,13 +19,12 @@ export function useGetPTO(): {
   loading: boolean;
 } {
   const [loading, setLoading] = useState<boolean>(false);
-  const { token, apiBaseURL } = useContext(Context);
+  const { getToken } = useGetToken();
 
   const getPTO = async () => {
     try {
       setLoading(true);
-
-      console.log({ token });
+      const token = await getToken();
 
       const res = await axios.get("http://localhost:4000" + "/pto", {
         headers: {
@@ -35,7 +33,9 @@ export function useGetPTO(): {
         },
       });
 
-      const { totalAccrued, totalAvailable } = res.data.payload;
+      // console.log({ res });
+
+      const { totalAccrued, totalAvailable } = res.data;
 
       return { totalAccrued, totalAvailable };
     } catch (error) {
@@ -48,7 +48,7 @@ export function useGetPTO(): {
   };
 
   return {
-    getPTO: getPTO,
+    getPTO,
     loading,
   };
 }
