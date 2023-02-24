@@ -8,12 +8,14 @@ We will need to install mkcert and run it to generate a local certificate. This 
 
 ### Installing mkcert
 
+- open terminal on your mac
 - run `brew install mkcert`
 - run `mkcert -install`
 - run `mkcert localhost`
 
 The This will generate two pem (localhost.pem and localhost-key.pem) files in your home directory.
 
+- create a certs folder in the root of the project and copy and paste the two pem files into it
 - create a server.js file in the root of the project with the code from this article: https://ilango.hashnode.dev/serving-a-nextjs-application-over-https-in-localhost
 
 - run `node server.js` to start the server and serve the app over https://localhost:3000
