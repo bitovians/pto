@@ -39,10 +39,16 @@ p {
   }
 }
 
-.logo {
+.logos {
   position: absolute;
   top: 0;
   left: 0;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+}
+
+.bitovi-logo {
   background: url(//2171535.fs1.hubspotusercontent-na1.net/hubfs/2171535/Bitovi_July_2016_Theme/Images/bitovi-logo.png)
     15px 7px no-repeat;
   width: 138px;
