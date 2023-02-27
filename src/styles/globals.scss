@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font: 400 1rem "Roboto", sans-serif;
 }
 
 html {
@@ -10,11 +11,8 @@ html {
   }
 }
 
-body,
-button,
-textarea,
-input {
-  font: 400 1rem "Montserrat", sans-serif;
+body {
+  background-color: #ecedfeff;
 }
 
 a {
@@ -39,4 +37,14 @@ p {
     font-size: 0.875rem;
     line-height: 1.25rem;
   }
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url(//2171535.fs1.hubspotusercontent-na1.net/hubfs/2171535/Bitovi_July_2016_Theme/Images/bitovi-logo.png)
+    15px 7px no-repeat;
+  width: 138px;
+  height: 54px;
 }

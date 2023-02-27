@@ -1,12 +1,12 @@
-import { AnchorHTMLAttributes } from "react";
+import { ButtonHTMLAttributes } from "react";
 import styles from "./styles.module.scss";
 
-type ButtonProps = AnchorHTMLAttributes<HTMLAnchorElement>;
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const Button = ({ children, ...rest }: ButtonProps) => (
-  <a className={styles.container} {...rest}>
+  <button className={styles.container} {...rest}>
     {children}
-  </a>
+  </button>
 );
 
 export default Button;
