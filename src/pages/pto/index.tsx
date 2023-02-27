@@ -1,23 +1,29 @@
 import { NextPage } from "next";
 import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 
 import { PTO, getPTOData } from "../../store";
 import Box from "../../components/Box";
 import GridContainer from "../../components/GridContainer";
+import Loading from "../../components/Loading";
 
 import styles from "./styles.module.scss";
 
 const Dashboard: NextPage = () => {
-  const [data, setData] = useState<PTO | null>(null);
+  const { data, isLoading, error } = useQuery<PTO>("pto", getPTOData, {
+    retry: 1,
+    staleTime: 1000 * 60 * 60, // 1 hour
+    cacheTime: 1000 * 60 * 10, // 10 minutes
+  });
 
-  useEffect(() => {
-    const getData = async () => {
-      const ptoData = await getPTOData();
-      setData(ptoData);
-    };
+  if (isLoading) {
+    return <Loading />;
+  }
 
-    getData();
-  }, []);
+  if (error) {
+    return <div>Something went wrong</div>;
+  }
+
   return (
     <div className={styles.container}>
       <GridContainer>
