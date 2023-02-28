@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
 
-import { PTO, getPTOData } from "../../store";
+import { PTO, getPTOData, logout } from "../../store";
 import Box from "../../components/Box";
 import GridContainer from "../../components/GridContainer";
 import Loading from "../../components/Loading";
@@ -18,6 +18,13 @@ const Dashboard: NextPage = () => {
     cacheTime: 1000 * 60 * 10, // 10 minutes
   });
 
+  function handleLogout() {
+    const logoutResponse = logout();
+    if (!!logoutResponse) {
+      push("/");
+    }
+  }
+
   if (isLoading) {
     return <Loading />;
   }
@@ -29,7 +36,7 @@ const Dashboard: NextPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.logout}>
-        <Button onClick={() => push("/")}>Logout</Button>
+        <Button onClick={handleLogout}>Logout</Button>
       </div>
       <GridContainer>
         <Box value={data?.totalAccrued.hours ?? ""} text="Accrued hours" />
