@@ -1,12 +1,16 @@
 import type { AppProps } from "next/app";
+import { QueryClient, QueryClientProvider } from "react-query";
+import "../styles/globals.scss";
+import PageHeader from "../components/PageHeader";
 
-import StateManagement from "../context/StateManagement";
+const queryClient = new QueryClient();
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <StateManagement>
+    <QueryClientProvider client={queryClient}>
+      <PageHeader />
       <Component {...pageProps} />
-    </StateManagement>
+    </QueryClientProvider>
   );
 }
 

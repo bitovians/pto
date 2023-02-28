@@ -5,10 +5,15 @@ interface IBox {
   text: string;
 }
 
+function formatNumber(value: string) {
+  if (Number.isNaN(value)) return value;
+  return Number(value).toFixed(2);
+}
+
 const Box = ({ value, text }: IBox) => {
   return (
     <div className={styles.box}>
-      {value}
+      <span>{formatNumber(value)}</span>
       <p>{text}</p>
     </div>
   );
