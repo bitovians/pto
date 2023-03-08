@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useRefreshStore } from "..";
+import { useRefreshStore, axiosStore } from "..";
 
 export async function getNewToken() {
   try {
-    const refreshToken = useRefreshStore.getState().refreshToken;
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/refresh`,
+    const {refreshToken} = useRefreshStore.getState();
+    const { axiosPTO } = axiosStore.getState();
+    const res = await axiosPTO.post(
+      `/refresh`,
       {
         refreshToken,
       },
@@ -17,7 +18,7 @@ export async function getNewToken() {
     );
     const { accessToken, refreshToken: newRefreshToken } = res.data.data;
     useRefreshStore.setState({ refreshToken: newRefreshToken });
-    return accessToken;
+    axiosStore.getState().setAccessToken(accessToken);
   } catch (error) {
     console.log(error);
   }

@@ -1,13 +1,18 @@
-import axios from "axios";
 import { getURLCode } from ".";
-import { useRefreshStore } from "..";
+import { useRefreshStore, axiosStore } from "..";
 
 export async function getToken() {
   try {
     const code = getURLCode();
     if (code) {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/token`,
+      // check for existing token
+      const { axiosPTO } = axiosStore.getState();
+      const currentToken = axiosPTO.defaults.headers.common["Authorization"];
+      if (currentToken) {
+        return;
+      }
+      const res = await axiosStore.getState().axiosPTO.post(
+        `/token`,
         {
           code,
         },
@@ -19,7 +24,7 @@ export async function getToken() {
       );
       const { accessToken, refreshToken } = res.data.data;
       useRefreshStore.setState({ refreshToken });
-      return accessToken;
+      axiosStore.getState().setAccessToken(accessToken);
     }
   } catch (error) {
     console.log(error);
