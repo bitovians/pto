@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from ".";
+import { getToken, getNewToken } from ".";
 
 export async function getPTOData() {
   try {
@@ -18,7 +18,14 @@ export async function getPTOData() {
       return PTOData;
     }
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    // check if accesstoken is expired
+    if (error.status === 401) {
+      const newToken = await getNewToken();
+      if (newToken) {
+        await getPTOData();
+      }
+    }
     console.log(error);
   }
 }

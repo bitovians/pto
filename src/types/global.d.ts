@@ -1,4 +1,4 @@
-export interface PTO {
+interface PTO {
   totalAccrued: {
     days: string;
     hours: string;
@@ -7,4 +7,9 @@ export interface PTO {
     days: string;
     hours: string;
   };
+}
+
+interface RefreshStore {
+  refreshToken: string;
+  setRefreshToken: (token: string) => void;
 }
