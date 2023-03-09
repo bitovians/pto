@@ -14,10 +14,8 @@ export function useLogin(): {
       setLoading(true);
       const code = getURLCode();
       if (code) {
-        console.log("already logged in");
         push("/pto");
       } else {
-        console.log("redirect");
         window.location.replace(process.env.NEXT_PUBLIC_API_BASE_URL + "/url");
       }
     } catch (error) {

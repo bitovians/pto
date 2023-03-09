@@ -13,14 +13,11 @@ export async function getToken() {
         const now = new Date();
         const expiresAt = new Date(accessTokenExpiresAt);
         if (now < expiresAt) {
-          console.log("token still valid, not getting new one");
           return;
         }
-        console.log("token expired, getting new one");
         await getNewToken();
         return;
       }
-      console.log("no token, getting new one");
       const res = await axiosPTO().post(
         `/token`,
         {
