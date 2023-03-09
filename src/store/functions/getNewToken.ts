@@ -1,11 +1,9 @@
-import axios from "axios";
-import { useRefreshStore, axiosStore } from "..";
+import { useTokenStore, axiosPTO } from "..";
 
 export async function getNewToken() {
   try {
-    const {refreshToken} = useRefreshStore.getState();
-    const { axiosPTO } = axiosStore.getState();
-    const res = await axiosPTO.post(
+    const { refreshToken } = useTokenStore.getState();
+    const res = await axiosPTO().post(
       `/refresh`,
       {
         refreshToken,
@@ -16,9 +14,8 @@ export async function getNewToken() {
         },
       }
     );
-    const { accessToken, refreshToken: newRefreshToken } = res.data.data;
-    useRefreshStore.setState({ refreshToken: newRefreshToken });
-    axiosStore.getState().setAccessToken(accessToken);
+    const { accessToken, refreshToken: newRefreshToken, accessTokenExpiresAt } = res.data.data;
+    useTokenStore.setState({ refreshToken: newRefreshToken, accessToken, accessTokenExpiresAt });
   } catch (error) {
     console.log(error);
   }

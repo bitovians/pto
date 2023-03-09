@@ -19,10 +19,8 @@ const Dashboard: NextPage = () => {
   });
 
   function handleLogout() {
-    const logoutResponse = logout();
-    if (!!logoutResponse) {
+      logout();
       push("/");
-    }
   }
 
   if (isLoading) {

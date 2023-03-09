@@ -1,3 +1,2 @@
 export * from "./functions";
-export * from "./refreshStore";
-export * from "./axiosStore";
+export * from "./tokenStore";

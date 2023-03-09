@@ -9,12 +9,8 @@ interface PTO {
   };
 }
 
-interface RefreshStore {
+interface TokenStore {
   refreshToken: string;
-  setRefreshToken: (token: string) => void;
-}
-
-interface AxiosStore<T> {
-  axiosPTO: T;
-  setAccessToken: (token: string) => void;
+  accessToken: string;
+  accessTokenExpiresAt: string;
 }
