@@ -1,4 +1,4 @@
-export interface PTO {
+interface PTO {
   totalAccrued: {
     days: string;
     hours: string;
@@ -7,4 +7,10 @@ export interface PTO {
     days: string;
     hours: string;
   };
+}
+
+interface TokenStore {
+  refreshToken: string;
+  accessToken: string;
+  accessTokenExpiresAt: string;
 }

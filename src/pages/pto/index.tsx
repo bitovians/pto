@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import { useQuery } from "react-query";
 import { useRouter } from "next/router";
 
-import { PTO, getPTOData, logout } from "../../store";
+import { getPTOData, logout } from "../../store";
 import Box from "../../components/Box";
 import GridContainer from "../../components/GridContainer";
 import Loading from "../../components/Loading";
@@ -19,10 +19,8 @@ const Dashboard: NextPage = () => {
   });
 
   function handleLogout() {
-    const logoutResponse = logout();
-    if (!!logoutResponse) {
+      logout();
       push("/");
-    }
   }
 
   if (isLoading) {

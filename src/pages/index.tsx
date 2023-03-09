@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import Button from "../components/Button";
-import { useLogin } from "../store/hooks/useLogin";
+import { useLogin } from "../store/hooks";
 
 import styles from "./styles.module.scss";
 

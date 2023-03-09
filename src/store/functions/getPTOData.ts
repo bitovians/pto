@@ -1,24 +1,13 @@
-import axios from "axios";
 import { getToken } from ".";
+import { axiosPTO } from "..";
 
 export async function getPTOData() {
   try {
-    const token = await getToken();
-    if (token) {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/pto`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const PTOData = res.data;
-      return PTOData;
-    }
-    return null;
-  } catch (error) {
-    console.log(error);
+    await getToken();
+    const res = await axiosPTO().get("/pto");
+    const PTOData = res.data;
+    return PTOData;
+  } catch (error: any) {
+    console.log(error)
   }
 }
