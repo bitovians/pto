@@ -4,6 +4,22 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Developing Locally
 
+We will need to install mkcert and run it to generate a local certificate. This is necessary because Freshbooks requires a secure connection to redirect to.
+
+### Installing mkcert
+
+- open terminal on your mac
+- run `brew install mkcert`
+- run `mkcert -install`
+- run `mkcert localhost`
+
+The This will generate two pem (localhost.pem and localhost-key.pem) files in your home directory.
+
+- create a certs folder in the root of the project and copy and paste the two pem files into it
+- create a server.js file in the root of the project with the code from this article: https://ilango.hashnode.dev/serving-a-nextjs-application-over-https-in-localhost
+
+- run `node server.js` to start the server and serve the app over https://localhost:3000
+
 ### Running the backend
 
 Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instructions in its README to run the backend.
@@ -13,7 +29,7 @@ Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instr
 Run the following to start the frontend:
 
 ```sh
-npm start
+npm run dev
 ```
 
 ### Redirecting from Freshbooks to localhost
@@ -26,7 +42,7 @@ To get the app working locally, replace the `https://bitovians.github.io` portio
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.

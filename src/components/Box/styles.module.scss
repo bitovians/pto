@@ -1,0 +1,14 @@
+.box {
+  border: 2.5px solid #cb3037;
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  background-color: #ffffff;
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #cb3037;
+  }
+}
