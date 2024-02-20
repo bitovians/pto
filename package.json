@@ -27,7 +27,7 @@
   "homepage": "https://bitovians.github.io/pto/",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start"
   },
   "eslintConfig": {
