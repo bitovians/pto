@@ -37,8 +37,8 @@ const Dashboard: NextPage = () => {
         <Button onClick={handleLogout}>Logout</Button>
       </div>
       <GridContainer>
-        <Box value={data?.totalAccrued.hours ?? ""} text="Accrued hours" />
-        <Box value={data?.totalAccrued.days ?? ""} text="Accrued days" />
+        <Box value={data?.totalAccrued.hours ?? ""} text="Available hours" />
+        <Box value={data?.totalAccrued.days ?? ""} text="Available days" />
         <Box
           value={data?.totalAvailable.hours ?? ""}
           text="Total hours available in the year"
