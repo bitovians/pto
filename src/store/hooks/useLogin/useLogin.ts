@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { getURLCode } from "../..";
+import { getToken, getURLCode } from "../..";
 
 export function useLogin(): {
   login: () => Promise<void>;
@@ -10,7 +10,9 @@ export function useLogin(): {
   useEffect(() => {
     const code = getURLCode();
     if (code) {
-      push("/pto");
+      getToken().then(() => {
+        push("/pto");
+      });
     }
   }, []);
 
