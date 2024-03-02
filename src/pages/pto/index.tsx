@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { useRouter } from "next/router";
 
 import { getPTOData, logout } from "../../store";
-import Box from "../../components/Box";
+import { Box, TextBox } from "../../components/Box";
 import GridContainer from "../../components/GridContainer";
 import Loading from "../../components/Loading";
 import Button from "../../components/Button";
@@ -47,6 +47,11 @@ const Dashboard: NextPage = () => {
           value={data?.totalAvailable.days ?? ""}
           text="Total days available in the year"
         />
+        <Box
+          value={data?.allTimeAccrued.hours ?? ""}
+          text="All-Time hours accrued"
+        />
+        <TextBox value={data?.startingDate ?? ""} text="Staring date (first punch)" />
       </GridContainer>
     </div>
   );
