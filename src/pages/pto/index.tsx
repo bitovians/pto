@@ -51,7 +51,7 @@ const Dashboard: NextPage = () => {
           value={data?.allTimeAccrued.hours ?? ""}
           text="All-Time hours accrued"
         />
-        <TextBox value={data?.startingDate ?? ""} text="Staring date (first punch)" />
+        <TextBox value={data?.startingDate ?? ""} text="Starting date (first punch)" />
       </GridContainer>
     </div>
   );

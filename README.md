@@ -15,10 +15,7 @@ We will need to install mkcert and run it to generate a local certificate. This 
 
 The This will generate two pem (localhost.pem and localhost-key.pem) files in your home directory.
 
-- create a certs folder in the root of the project and copy and paste the two pem files into it
-- create a server.js file in the root of the project with the code from this article: https://ilango.hashnode.dev/serving-a-nextjs-application-over-https-in-localhost
-
-- run `node server.js` to start the server and serve the app over https://localhost:3000
+- create a `/certs` folder in the root of the project and copy and paste the two pem files into it
 
 ### Running the backend
 
@@ -26,18 +23,22 @@ Clone the [pto-api repo](https://github.com/bitovi/pto-api) and follow the instr
 
 ### Running the frontend
 
+To get the app working locally, update the `.env` file with the following:
+
+```
+API_BASE_URL=http://localhost:4000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+```
+
+__Don't commit these changes or you will break the deployed app.__
+
 Run the following to start the frontend:
 
 ```sh
 npm run dev
 ```
 
-### Redirecting from Freshbooks to localhost
-
-When going through the authorization flow with Freshbooks, you’ll notice that it redirects you to a URL like `https://bitovians.github.io/pto/?code=q32w3rs4dtfjgyk`.
-
-To get the app working locally, replace the `https://bitovians.github.io` portion with `http://localhost:3000` and load the page. After doing so, you should see numbers that reflect your available PTO.
-
+Navigate to: [https://localhost:3000/pto](https://localhost:3000/pto)
 ## Available Scripts
 
 In the project directory, you can run:
