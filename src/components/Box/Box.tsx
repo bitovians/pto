@@ -5,12 +5,17 @@ interface IBox {
   text: string;
 }
 
+interface ITextBox {
+  value: string;
+  text: string;
+}
+
 function formatNumber(value: string) {
   if (Number.isNaN(value)) return value;
   return Number(value).toFixed(2);
 }
 
-const Box = ({ value, text }: IBox) => {
+export const Box = ({ value, text }: IBox) => {
   return (
     <div className={styles.box}>
       <span>{formatNumber(value)}</span>
@@ -19,4 +24,11 @@ const Box = ({ value, text }: IBox) => {
   );
 };
 
-export default Box;
+export const TextBox = ({ value, text }: ITextBox) => {
+  return (
+    <div className={styles.box}>
+      <span>{value}</span>
+      <p>{text}</p>
+    </div>
+  );
+}

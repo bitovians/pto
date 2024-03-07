@@ -1,4 +1,8 @@
 interface PTO {
+  allTimeAccrued: {
+    days: string;
+    hours: string;
+  };
   totalAccrued: {
     days: string;
     hours: string;
@@ -7,6 +11,8 @@ interface PTO {
     days: string;
     hours: string;
   };
+  startingDate;
+  string;
 }
 
 interface TokenStore {
