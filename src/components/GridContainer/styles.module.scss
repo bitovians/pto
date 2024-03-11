@@ -5,3 +5,11 @@
   grid-template-columns: auto auto;
   gap: 35px;
 }
+
+.containerHalfWidth {
+  display: grid;
+  max-width: 800px;
+  width: 50%;
+  grid-template-columns: auto auto;
+  gap: 35px;
+}
