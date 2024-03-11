@@ -11,10 +11,6 @@ html {
   }
 }
 
-body {
-  background-color: #ecedfeff;
-}
-
 a {
   color: inherit;
   text-decoration: none;
@@ -39,18 +35,38 @@ p {
   }
 }
 
+.logout {
+  margin: var(--pico-spacing) var(--pico-spacing) var(--pico-spacing) auto;
+  margin-right: var(--pico-spacing);
+  
+}
+
 .logos {
-  position: absolute;
-  top: 0;
-  left: 0;
   display: flex;
-  width: fit-content;
   align-items: center;
 }
 
 .bitovi-logo {
-  background: url(//2171535.fs1.hubspotusercontent-na1.net/hubfs/2171535/Bitovi_July_2016_Theme/Images/bitovi-logo.png)
-    15px 7px no-repeat;
-  width: 138px;
-  height: 54px;
+  margin: 0 var(--pico-spacing);
+  background: url(//2171535.fs1.hubspotusercontent-na1.net/hubfs/2171535/Bitovi_July_2016_Theme/Images/bitovi-logo.png) no-repeat;
+  width: 108px;
+  height: 33px;
+}
+
+.dark-mode {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    display: block;
+  }
+
+  .light-mode {
+    display: none;
+  }
+}
+
+main {
+  margin-bottom: var(--pico-spacing);
 }
