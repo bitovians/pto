@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { getToken, getURLCode } from "../..";
+import { getToken, getURLCode, getConfigParams } from "../..";
 
 export function useLogin(): {
   login: () => Promise<void>;
@@ -13,11 +13,13 @@ export function useLogin(): {
       getToken().then(() => {
         push("/pto");
       });
+    } else {
+      getConfigParams();
     }
   }, []);
 
   const login = async () => {
-      window.location.replace(process.env.NEXT_PUBLIC_API_BASE_URL + "/url");
+    window.location.replace(process.env.NEXT_PUBLIC_API_BASE_URL + "/url");
   };
 
   return {

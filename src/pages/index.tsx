@@ -8,13 +8,18 @@ const Login: NextPage = () => {
   const { login } = useLogin();
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <h1>PTO APP</h1>
-
-        <Button onClick={login}>Login</Button>
+    <main className="container">      
+      <div className="grid">
+        <div></div>
+        <div>
+          <article className={styles.card}>
+            <h1>PTO APP</h1>
+            <Button onClick={login}>Login</Button>
+          </article>
+        </div>
+        <div></div>
       </div>
-    </div>
+    </main>
   );
 };
 

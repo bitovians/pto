@@ -31,6 +31,13 @@ const Dashboard: NextPage = () => {
     <main className="container-fluid">
       <div className="grid">
         <div>
+          <fieldset>
+            <a href="/pto/pto">view dashboard</a>
+          </fieldset>
+        </div>
+      </div>
+      <div className="grid">
+        <div>
           <h4>Accruals</h4>
           <table className="striped">
             <thead>
