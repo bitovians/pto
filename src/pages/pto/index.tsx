@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { NextPage } from "next";
 import { useQuery } from "react-query";
 
@@ -47,7 +47,7 @@ const Dashboard: NextPage = () => {
             </label>
           </fieldset>
           <fieldset>
-            <a href={`/pto/sheets${window.location.search}`}>view breakdown sheets</a>
+            <a href="/pto/sheets">view breakdown sheets</a>
           </fieldset>
         </div>
       </div>
