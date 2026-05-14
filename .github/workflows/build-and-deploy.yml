@@ -73,21 +73,18 @@ jobs:
       #   INFRA_REPO_TOKEN — GitHub Personal Access Token (classic or fine-grained)
       #                       with "Contents: Read and Write" permission on
       #                       bitovi/pto-tracking-infra.
+      - name: Load SSH deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.INFRA_DEPLOY_KEY }}
+
       - name: Update image tag in infra repo
         env:
           IMAGE_TAG: ${{ steps.build.outputs.image_tag }}
           IMAGE_URI: ${{ steps.build.outputs.image_uri }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.INFRA_DEPLOY_KEY }}" > ~/.ssh/infra-deploy-key
-          chmod 600 ~/.ssh/infra-deploy-key
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          GIT_SSH_COMMAND="ssh -i ~/.ssh/infra-deploy-key" git clone \
-            "git@github.com:${INFRA_REPO}.git" \
-            infra-repo
-
+          git clone "git@github.com:${INFRA_REPO}.git" infra-repo
           cd infra-repo
-          export GIT_SSH_COMMAND="ssh -i ~/.ssh/infra-deploy-key"
 
           sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*|image: ${IMAGE_URI}|g" \
             "${DEPLOYMENT_MANIFEST}"
