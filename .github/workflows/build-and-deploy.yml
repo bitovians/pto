@@ -8,7 +8,7 @@ env:
   ECR_REGISTRY: 755521597925.dkr.ecr.us-east-1.amazonaws.com
   ECR_REPOSITORY: pto-tracking/pto-frontend
   AWS_REGION: us-east-1
-  INFRA_REPO: bitovians/pto-tracking-infra
+  INFRA_REPO: bitovi/pto-tracking-infra
   DEPLOYMENT_MANIFEST: k8s/deployments/frontend-deployment.yaml
 
 jobs:
@@ -72,7 +72,7 @@ jobs:
       # Required secret:
       #   INFRA_REPO_TOKEN — GitHub Personal Access Token (classic or fine-grained)
       #                       with "Contents: Read and Write" permission on
-      #                       bitovians/pto-tracking-infra.
+      #                       bitovi/pto-tracking-infra.
       - name: Update image tag in infra repo
         env:
           INFRA_REPO_TOKEN: ${{ secrets.INFRA_REPO_TOKEN }}
