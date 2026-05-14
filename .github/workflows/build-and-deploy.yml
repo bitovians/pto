@@ -103,4 +103,4 @@ jobs:
           git commit -m "ci(frontend): update image tag to ${IMAGE_TAG}
 
           Triggered by ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
-          git push origin k8s-migration
+          git push origin main
