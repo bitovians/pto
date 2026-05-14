@@ -1,22 +1,99 @@
-name: Deploy
+name: Build and Deploy (Frontend)
+
 on:
   push:
-    branches:
-      - 'master'
+    branches: [k8s-migration]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+env:
+  ECR_REGISTRY: 755521597925.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: pto-frontend
+  AWS_REGION: us-east-1
+  INFRA_REPO: bitovians/pto-tracking-infra
+  DEPLOYMENT_MANIFEST: k8s/deployments/frontend-deployment.yaml
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.build-publish.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required if you switch to OIDC-based AWS auth later
+
     steps:
-      - id: build-publish
-        uses: bitovi/github-actions-react-to-github-pages@v1.2.2
+      - uses: actions/checkout@v4
+
+      # ── Authenticate with AWS ───────────────────────────────────────────────
+      # Required secrets:
+      #   AWS_ACCESS_KEY_ID     — IAM access key with ECR push permissions
+      #   AWS_SECRET_ACCESS_KEY — corresponding secret key
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          path: out
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ── Build and push image ────────────────────────────────────────────────
+      # NEXT_PUBLIC_API_BASE_URL is baked into the JavaScript bundle at build
+      # time by Next.js — it cannot be injected at runtime via a ConfigMap.
+      # The value must be set here as a Docker build argument so that
+      # `next build` embeds the correct API URL in the output bundle.
+      #
+      # Required secret:
+      #   NEXT_PUBLIC_API_BASE_URL — full URL to the API, e.g.
+      #                              http://<alb-hostname>/api
+      #                              Set this in the repository secrets under
+      #                              Settings → Secrets → Actions.
+      - name: Build and push Docker image
+        id: build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}"
+
+          docker build \
+            --build-arg NEXT_PUBLIC_API_BASE_URL="${NEXT_PUBLIC_API_BASE_URL}" \
+            --tag "${IMAGE_URI}:${SHORT_SHA}" \
+            --tag "${IMAGE_URI}:latest" \
+            -f Dockerfile \
+            .
+
+          docker push "${IMAGE_URI}:${SHORT_SHA}"
+          docker push "${IMAGE_URI}:latest"
+
+          echo "image_tag=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "image_uri=${IMAGE_URI}:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      # ── Update image tag in the infra repo ─────────────────────────────────
+      # Required secret:
+      #   INFRA_REPO_TOKEN — GitHub Personal Access Token (classic or fine-grained)
+      #                       with "Contents: Read and Write" permission on
+      #                       bitovians/pto-tracking-infra.
+      - name: Update image tag in infra repo
+        env:
+          INFRA_REPO_TOKEN: ${{ secrets.INFRA_REPO_TOKEN }}
+          IMAGE_TAG: ${{ steps.build.outputs.image_tag }}
+          IMAGE_URI: ${{ steps.build.outputs.image_uri }}
+        run: |
+          git clone \
+            "https://x-access-token:${INFRA_REPO_TOKEN}@github.com/${INFRA_REPO}.git" \
+            infra-repo
+
+          cd infra-repo
+
+          sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*|image: ${IMAGE_URI}|g" \
+            "${DEPLOYMENT_MANIFEST}"
+
+          grep "image:" "${DEPLOYMENT_MANIFEST}"
+
+          git config user.email "ci-bot@github.com"
+          git config user.name "CI Bot"
+          git add "${DEPLOYMENT_MANIFEST}"
+          git commit -m "ci(frontend): update image tag to ${IMAGE_TAG}
+
+          Triggered by ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+          git push origin k8s-migration
