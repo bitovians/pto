@@ -6,7 +6,7 @@ on:
 
 env:
   ECR_REGISTRY: 755521597925.dkr.ecr.us-east-1.amazonaws.com
-  ECR_REPOSITORY: pto-frontend
+  ECR_REPOSITORY: pto-tracking/pto-frontend
   AWS_REGION: us-east-1
   INFRA_REPO: bitovians/pto-tracking-infra
   DEPLOYMENT_MANIFEST: k8s/deployments/frontend-deployment.yaml
