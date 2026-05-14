@@ -75,15 +75,19 @@ jobs:
       #                       bitovi/pto-tracking-infra.
       - name: Update image tag in infra repo
         env:
-          INFRA_REPO_TOKEN: ${{ secrets.INFRA_REPO_TOKEN }}
           IMAGE_TAG: ${{ steps.build.outputs.image_tag }}
           IMAGE_URI: ${{ steps.build.outputs.image_uri }}
         run: |
-          git clone \
-            "https://x-access-token:${INFRA_REPO_TOKEN}@github.com/${INFRA_REPO}.git" \
+          mkdir -p ~/.ssh
+          echo "${{ secrets.INFRA_DEPLOY_KEY }}" > ~/.ssh/infra-deploy-key
+          chmod 600 ~/.ssh/infra-deploy-key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/infra-deploy-key" git clone \
+            "git@github.com:${INFRA_REPO}.git" \
             infra-repo
 
           cd infra-repo
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/infra-deploy-key"
 
           sed -i "s|image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*|image: ${IMAGE_URI}|g" \
             "${DEPLOYMENT_MANIFEST}"
