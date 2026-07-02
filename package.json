@@ -26,7 +26,6 @@
     "web-vitals": "^2.1.4",
     "zustand": "^4.3.3"
   },
-  "homepage": "https://bitovians.github.io/pto/",
   "scripts": {
     "dev": "node server.js",
     "build": "next build && next export",
@@ -49,8 +48,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^4.0.0"
   }
 }

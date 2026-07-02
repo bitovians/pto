@@ -1,3 +1,1 @@
-module.exports = {
-    basePath: '/pto'
-}
+module.exports = {}
