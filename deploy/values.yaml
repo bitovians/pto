@@ -1,0 +1,14 @@
+# Platform values for pto — consumed by the platform master chart
+# (bitovi-platform-services: charts/platform-app-resources) via the pto
+# Application's $values source. The chart renders a kro StaticSite instance;
+# the platform's RGD expands it into the full AWS footprint automatically.
+kind: static-site
+app:
+  name: pto
+  repo: bitovians/pto
+  # This repo deploys from master (not the platform default of main).
+  deployBranch: master
+staticSite:
+  domain: pto.bitovi-tools.com
+  hostedZone:
+    name: bitovi-tools-com
