@@ -18,14 +18,14 @@ const PageHeader: FC = () => {
         aria-label="bitovi-logo"
       />
       <img
-        src="/pto/images/freshbooks-logo-light-mode.svg"
+        src="/images/freshbooks-logo-light-mode.svg"
         className="light-mode"
         alt="freshbooks logo"
         width="155"
         height="38"
       />
       <img
-        src="/pto/images/freshbooks-logo-dark-mode.svg"
+        src="/images/freshbooks-logo-dark-mode.svg"
         className="dark-mode"
         alt="freshbooks logo"
         width="155"
