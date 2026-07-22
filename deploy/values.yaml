@@ -3,6 +3,22 @@
 # Application's $values source. The chart renders a kro StaticSite instance;
 # the platform's RGD expands it into the full AWS footprint automatically.
 kind: static-site
+
+# Crossplane cutover (bitovi-platform-services migration, ADR 0004): the
+# platform chart now renders one platform.bitovi.com StaticSite XR; the
+# Composition adopts the EXISTING AWS footprint. importIds are the three
+# AWS-assigned identifiers (from the Phase 1 shadow inventory) and are
+# PERMANENT once set (removing them would strip the external-name binding).
+# Everything else adopts via convention names. The deploy workflow is
+# unaffected (it reads repo variables, and bucket/distribution identities
+# do not change at adoption).
+crossplane:
+  enabled: true
+  deletionProtection: true
+  importIds:
+    certificateArn: arn:aws:acm:us-east-1:486491621059:certificate/fb6f9a70-2175-4be1-96bb-880f42392069
+    distributionId: EBLYMQFBJTA6
+    oacId: E1ZG6F8BHTDUEH
 app:
   name: pto
   repo: bitovians/pto
