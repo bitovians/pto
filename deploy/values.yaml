@@ -12,6 +12,14 @@ kind: static-site
 # Everything else adopts via convention names. The deploy workflow is
 # unaffected (it reads repo variables, and bucket/distribution identities
 # do not change at adoption).
+# ESO off for this site (KNOWN ISSUE): the platform GitHub App is installed
+# on the bitovi org only; pto lives in bitovians, so the Actions-secrets
+# push can never succeed (the deploy workflow reads manually-set repo
+# variables instead, and always has). Without this, the composed PushSecret
+# fails forever and holds the app Progressing.
+eso:
+  enabled: false
+
 crossplane:
   enabled: true
   deletionProtection: true
