@@ -12,7 +12,7 @@ workloads:
 
 infra:
   hostedZone: bitovi-tools-com
-  deletionProtection: true
+  deletionProtection: false
   # bitovians is not the org the platform GitHub App is installed on, so ESO
   # can never push CI secrets here. deploy.yml reads them from this repo's
   # own secrets instead.
