@@ -4,13 +4,10 @@
 #
 # bitovians is not the org the platform GitHub App is installed on, so ESO
 # never pushes SITE_DEPLOY_ROLE_ARN / SITE_BUCKET / CLOUDFRONT_DISTRIBUTION_ID
-# here — `secrets: inherit` would also miss BITOVI_PLATFORM_AWS_ACCOUNT_ID,
-# which is a bitovi-org secret, invisible to a bitovians-org repo. All three
-# are set here as this repo's own secrets instead (repo settings > Secrets and
-# variables > Actions). SITE_BUCKET and CLOUDFRONT_DISTRIBUTION_ID keep their
-# prior values — they were repo VARIABLES before this rewrite; move them to
-# SECRETS with the same values. SITE_DEPLOY_ROLE_ARN is the prior
-# AWS_DEPLOY_ROLE_ARN variable, renamed and moved to a secret to match.
+# here, and `secrets: inherit` cannot see the bitovi-org secrets that the
+# shared workflow uses as a fallback. This file passes the values from this
+# repo's Actions variables (AWS_DEPLOY_ROLE_ARN, SITE_BUCKET,
+# CLOUDFRONT_DISTRIBUTION_ID) instead. None of them is sensitive.
 
 name: Deploy static site
 
@@ -36,9 +33,9 @@ jobs:
       build-env: |
         NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL }}
     secrets:
-      SITE_DEPLOY_ROLE_ARN: ${{ secrets.SITE_DEPLOY_ROLE_ARN }}
-      SITE_BUCKET: ${{ secrets.SITE_BUCKET }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+      SITE_DEPLOY_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
 
   notify:
     needs: deploy
