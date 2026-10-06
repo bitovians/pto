@@ -1,38 +1,27 @@
-# Platform values for pto — consumed by the platform master chart
-# (bitovi-platform-services: charts/platform-app-resources) via the pto
-# Application's $values source. The chart renders a kro StaticSite instance;
-# the platform's RGD expands it into the full AWS footprint automatically.
-kind: static-site
+# Platform app interface (bitovi-platform-services: charts/interface). One
+# file describes this app to the platform.
+name: pto
+repo: bitovians/pto
+deployBranch: master
 
-# Crossplane cutover (bitovi-platform-services migration, ADR 0004): the
-# platform chart now renders one platform.bitovi.com StaticSite XR; the
-# Composition adopts the EXISTING AWS footprint. importIds are the three
-# AWS-assigned identifiers (from the Phase 1 shadow inventory) and are
-# PERMANENT once set (removing them would strip the external-name binding).
-# Everything else adopts via convention names. The deploy workflow is
-# unaffected (it reads repo variables, and bucket/distribution identities
-# do not change at adoption).
-# ESO off for this site (KNOWN ISSUE): the platform GitHub App is installed
-# on the bitovi org only; pto lives in bitovians, so the Actions-secrets
-# push can never succeed (the deploy workflow reads manually-set repo
-# variables instead, and always has). Without this, the composed PushSecret
-# fails forever and holds the app Progressing.
-eso:
-  enabled: false
+workloads:
+  main: # key "main" keeps the derived resource name "pto", no suffix —
+        # required: the AWS resources below are ADOPTED under that exact name.
+    kind: static-site
+    domain: pto.bitovi-tools.com
 
-crossplane:
-  enabled: true
-  deletionProtection: true
+infra:
+  hostedZone: bitovi-tools-com
+  deletionProtection: false
+  # bitovians is not the org the platform GitHub App is installed on, so ESO
+  # can never push CI secrets here. deploy.yml reads them from this repo's
+  # own secrets instead.
+  ciSecrets: false
+  # Adoption of the pre-existing AWS footprint (bitovi-platform-services
+  # migration, ADR 0004). Permanent — removing an entry here strips that
+  # resource's external-name binding and the composition tries to create a
+  # new one instead of managing the old one.
   importIds:
     certificateArn: arn:aws:acm:us-east-1:486491621059:certificate/fb6f9a70-2175-4be1-96bb-880f42392069
     distributionId: EBLYMQFBJTA6
     oacId: E1ZG6F8BHTDUEH
-app:
-  name: pto
-  repo: bitovians/pto
-  # This repo deploys from master (not the platform default of main).
-  deployBranch: master
-staticSite:
-  domain: pto.bitovi-tools.com
-  hostedZone:
-    name: bitovi-tools-com
