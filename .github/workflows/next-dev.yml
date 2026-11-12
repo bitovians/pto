@@ -1,0 +1,84 @@
+# Deploys the site to the dev cluster's static site (the platform's new
+# API). Production is not affected: its deploy is deploy.yml, which reads
+# this repo's Actions variables.
+#
+# The job runs in the `dev` GitHub environment, whose branch rule limits it
+# to master. Its secrets are the CI values the platform publishes for this
+# repo: ECR_PUSH_ROLE_ARN (the deploy role, despite its name),
+# SITE_BUCKET_WEB and DISTRIBUTION_ID_WEB. The platform's GitHub App is not
+# installed on bitovians, so they are set by hand from the Project's status.
+# If the App is installed later, the platform writes the same names here.
+name: Deploy to the dev cluster
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: next-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # This repo's Actions variables hold production's bucket and
+      # distribution. Deploy only with a dev role and the dev bucket.
+      - name: Refuse any target but the dev cluster's
+        env:
+          ROLE: ${{ secrets.ECR_PUSH_ROLE_ARN }}
+          BUCKET: ${{ secrets.SITE_BUCKET_WEB }}
+          DIST: ${{ secrets.DISTRIBUTION_ID_WEB }}
+        run: |
+          case "$ROLE" in
+            arn:aws:iam::*:role/bcp/dev/*-ci) ;;
+            *) echo "::error::ECR_PUSH_ROLE_ARN is not a dev CI role. Is the dev environment's secret set?"; exit 1 ;;
+          esac
+          case "$BUCKET" in
+            bcp-dev-pto-web-site) ;;
+            *) echo "::error::SITE_BUCKET_WEB is not the dev bucket."; exit 1 ;;
+          esac
+          [ -n "$DIST" ] || { echo "::error::DISTRIBUTION_ID_WEB is not set."; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Build
+        env:
+          # The API on the dev cluster. Inlined at build time.
+          NEXT_PUBLIC_API_BASE_URL: https://pto-api.dev.bitovi-tools.com
+        run: |
+          npm ci
+          npm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ECR_PUSH_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # Hashed assets are cached for a year; HTML is always revalidated.
+      - name: Sync files
+        env:
+          BUCKET: ${{ secrets.SITE_BUCKET_WEB }}
+        run: |
+          aws s3 sync out/ "s3://$BUCKET" --delete \
+            --cache-control "public,max-age=31536000,immutable" --exclude "*.html"
+          aws s3 sync out/ "s3://$BUCKET" --delete \
+            --cache-control "public,max-age=0,must-revalidate" --exclude "*" --include "*.html"
+
+      - name: Invalidate the CDN
+        env:
+          DIST: ${{ secrets.DISTRIBUTION_ID_WEB }}
+        run: aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*"
