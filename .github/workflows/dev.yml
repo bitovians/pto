@@ -1,0 +1,36 @@
+# Deploys the site to the dev cluster (the platform's Project API) on every
+# push to master. Production is not affected: it deploys from deploy.yml.
+#
+# The shared workflow runs in the `dev` GitHub environment and refuses any
+# role or bucket that is not dev's. The platform's GitHub App is not installed
+# on bitovians, so the environment's secrets are set by hand from the
+# Project's status: ECR_PUSH_ROLE_ARN, SITE_BUCKET_WEB, DISTRIBUTION_ID_WEB.
+# If the App is installed later, the platform writes the same names.
+name: Deploy to the dev cluster
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dev
+  cancel-in-progress: true
+
+jobs:
+  web:
+    uses: bitovi/platform-ci/.github/workflows/project-site.yml@v0.0.4
+    permissions:
+      id-token: write   # OIDC -> AWS
+      contents: read
+    with:
+      environment: dev
+      site: web
+      build-dir: out
+      # The API on the dev cluster. Inlined at build time.
+      build-env: |
+        NEXT_PUBLIC_API_BASE_URL=https://pto-api.dev.bitovi-tools.com
+    secrets: inherit
