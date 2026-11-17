@@ -1,0 +1,13 @@
+# pto on the platform's new API (the Project API).
+#
+# Production does not read this folder. It runs from deploy/values.yaml on
+# the current platform until cutover. The dev cluster runs this file as a
+# shadow. The API (bitovi/pto-api) is the other repo of the same Project.
+#
+# One file for every cluster: the site differs only by its zone. The file
+# reference is the values file README in bitovi-platform-services
+# (platform/charts/project).
+workloads:
+  web:
+    kind: static-site
+    domain: pto               # https://pto.<the cluster's zone>
