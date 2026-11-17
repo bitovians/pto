@@ -1,11 +1,15 @@
 # Deploys the site to the dev cluster (the platform's Project API) on every
 # push to master. Production is not affected: it deploys from deploy.yml.
 #
-# The shared workflow runs in the `dev` GitHub environment and refuses any
-# role or bucket that is not dev's. The platform's GitHub App is not installed
-# on bitovians, so the environment's secrets are set by hand from the
-# Project's status: ECR_PUSH_ROLE_ARN, SITE_BUCKET_WEB, DISTRIBUTION_ID_WEB.
-# If the App is installed later, the platform writes the same names.
+# The same steps as bitovi/platform-ci's project-site.yml, written out here
+# because this repo is in another organization: GitHub gives a reusable
+# workflow from another organization none of this repo's secrets, environment
+# secrets included. Keep the two in step.
+#
+# The platform's GitHub App is not installed on bitovians, so the `dev`
+# environment's secrets are set by hand from the pto Project's status
+# (status.repos.web.ciValues): ECR_PUSH_ROLE_ARN, SITE_BUCKET_WEB,
+# DISTRIBUTION_ID_WEB.
 name: Deploy to the dev cluster
 
 on:
@@ -21,16 +25,86 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web:
-    uses: bitovi/platform-ci/.github/workflows/project-site.yml@v0.0.4
+  # The install and build run here: any dependency's script runs with this
+  # job's token. So this job has no environment and no id-token, and cannot
+  # reach the CI role.
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        env:
+          # The API on the dev cluster. Inlined at build time.
+          NEXT_PUBLIC_API_BASE_URL: https://pto-api.dev.bitovi-tools.com
+        run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-web
+          path: out
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  # Runs no command from the repo or its dependencies.
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: dev
     permissions:
       id-token: write   # OIDC -> AWS
-      contents: read
-    with:
-      environment: dev
-      site: web
-      build-dir: out
-      # The API on the dev cluster. Inlined at build time.
-      build-env: |
-        NEXT_PUBLIC_API_BASE_URL=https://pto-api.dev.bitovi-tools.com
-    secrets: inherit
+    steps:
+      # A missing environment secret falls back to a repo-level secret of the
+      # same name. Refuse any role outside dev's IAM path and any bucket that
+      # is not this site's.
+      - name: Refuse any target but dev's
+        env:
+          ROLE: ${{ secrets.ECR_PUSH_ROLE_ARN }}
+          BUCKET: ${{ secrets.SITE_BUCKET_WEB }}
+          DIST: ${{ secrets.DISTRIBUTION_ID_WEB }}
+        run: |
+          case "$ROLE" in
+            arn:aws:iam::*:role/bcp/dev/*-ci) ;;
+            *) echo "::error::ECR_PUSH_ROLE_ARN is not a CI role under /bcp/dev/. Are the dev environment's values set?"; exit 1 ;;
+          esac
+          case "$BUCKET" in
+            *-web-site) ;;
+            *) echo "::error::SITE_BUCKET_WEB must be set in the dev environment; the bucket must be site web's."; exit 1 ;;
+          esac
+          [ -n "$DIST" ] || { echo "::error::DISTRIBUTION_ID_WEB must be set in the dev environment."; exit 1; }
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-web
+          path: site
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ECR_PUSH_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # Hashed assets are cached for a year; HTML is always revalidated.
+      - name: Sync files
+        env:
+          BUCKET: ${{ secrets.SITE_BUCKET_WEB }}
+        run: |
+          aws s3 sync site "s3://$BUCKET" --delete \
+            --cache-control "public,max-age=31536000,immutable" --exclude "*.html"
+          aws s3 sync site "s3://$BUCKET" --delete \
+            --cache-control "public,max-age=0,must-revalidate" --exclude "*" --include "*.html"
+
+      - name: Invalidate the CDN
+        env:
+          DIST: ${{ secrets.DISTRIBUTION_ID_WEB }}
+        run: aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" >/dev/null
